@@ -1,0 +1,353 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { ArrowRight, Github, Bot, Loader2, Code, Zap, Share2, Sparkles, Star, TrendingUp } from "lucide-react";
+
+export default function Home() {
+  const [username, setUsername] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
+  const handleAnalyze = async () => {
+    if (!username) {
+      setError("Please enter a GitHub username.");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ githubUsername: username }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Something went wrong");
+      }
+
+      router.push(data.reportUrl);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 text-white relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl animate-pulse delay-500"></div>
+      </div>
+
+      {/* Grid Pattern Overlay */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+
+      <main className="relative z-10">
+        {/* Hero Section */}
+        <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto text-center">
+            {/* Logo/Brand */}
+            <div className="flex items-center justify-center mb-8">
+              <div className="p-4 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-2xl">
+                <Bot size={48} className="text-white" />
+              </div>
+            </div>
+
+            {/* Main Heading */}
+            <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black mb-6 bg-gradient-to-r from-white via-indigo-100 to-purple-100 bg-clip-text text-transparent leading-tight">
+              Discover Your
+              <span className="block bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+                Developer DNA
+              </span>
+            </h1>
+
+            {/* Subtitle */}
+            <p className="text-xl sm:text-2xl text-indigo-200 mb-12 max-w-3xl mx-auto leading-relaxed">
+              Unlock the secrets of your coding personality. Enter a GitHub username to generate a 
+              <span className="text-purple-300 font-semibold"> humorous, shareable personality profile</span> 
+              based on their coding habits and patterns.
+            </p>
+
+            {/* CTA Section */}
+            <div className="max-w-2xl mx-auto mb-16">
+              <div className="relative p-8 bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl">
+                <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                  <div className="relative flex-1 w-full">
+                    <Input
+                      type="text"
+                      placeholder="Enter GitHub username..."
+                      className="h-14 px-6 bg-white/20 border-white/30 text-white placeholder-white/60 rounded-xl text-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent backdrop-blur-sm"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleAnalyze()}
+                      disabled={loading}
+                    />
+                  </div>
+                  <Button 
+                    size="lg" 
+                    onClick={handleAnalyze} 
+                    disabled={loading}
+                    className="h-14 px-8 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold rounded-xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-105"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Analyzing...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="mr-2 h-5 w-5" />
+                        Analyze DNA
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                      </>
+                    )}
+                  </Button>
+                </div>
+                {error && (
+                  <p className="text-red-400 text-sm mt-4 text-center font-medium">{error}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Stats/Social Proof */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+              <div className="text-center p-4 bg-white/5 rounded-xl backdrop-blur-sm">
+                <div className="text-3xl font-bold text-indigo-300">50K+</div>
+                <div className="text-sm text-white/70">Developers Analyzed</div>
+              </div>
+              <div className="text-center p-4 bg-white/5 rounded-xl backdrop-blur-sm">
+                <div className="text-3xl font-bold text-purple-300">10</div>
+                <div className="text-sm text-white/70">Personality Types</div>
+              </div>
+              <div className="text-center p-4 bg-white/5 rounded-xl backdrop-blur-sm">
+                <div className="text-3xl font-bold text-pink-300">99.9%</div>
+                <div className="text-sm text-white/70">Accuracy Rate</div>
+              </div>
+              <div className="text-center p-4 bg-white/5 rounded-xl backdrop-blur-sm">
+                <div className="text-3xl font-bold text-blue-300">24/7</div>
+                <div className="text-sm text-white/70">Always Available</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="py-24 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-20">
+              <h2 className="text-5xl sm:text-6xl font-black mb-6 bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">
+                Powerful Analysis Features
+              </h2>
+              <p className="text-xl text-indigo-200 max-w-3xl mx-auto">
+                Our AI-powered analysis dives deep into your coding patterns to reveal your unique developer personality
+              </p>
+            </div>
+
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              <Card className="group bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border-white/20 rounded-2xl shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 hover:scale-105">
+                <CardHeader className="pb-4">
+                  <div className="mb-4 p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl w-fit">
+                    <Code className="h-8 w-8 text-white" />
+                  </div>
+                  <CardTitle className="text-2xl text-white group-hover:text-purple-200 transition-colors">
+                    Deep Code Analysis
+                  </CardTitle>
+                  <CardDescription className="text-indigo-200">
+                    We analyze commit times, language choices, repository patterns, and coding habits to build your unique developer fingerprint.
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="group bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border-white/20 rounded-2xl shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 hover:scale-105">
+                <CardHeader className="pb-4">
+                  <div className="mb-4 p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl w-fit">
+                    <Star className="h-8 w-8 text-white" />
+                  </div>
+                  <CardTitle className="text-2xl text-white group-hover:text-purple-200 transition-colors">
+                    10 Personality Archetypes
+                  </CardTitle>
+                  <CardDescription className="text-indigo-200">
+                    Are you a Midnight Warrior, Documentation Dodger, or Framework Hopper? Discover your coding persona among our carefully crafted archetypes.
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="group bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border-white/20 rounded-2xl shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 hover:scale-105">
+                <CardHeader className="pb-4">
+                  <div className="mb-4 p-3 bg-gradient-to-br from-pink-500 to-red-600 rounded-xl w-fit">
+                    <Share2 className="h-8 w-8 text-white" />
+                  </div>
+                  <CardTitle className="text-2xl text-white group-hover:text-purple-200 transition-colors">
+                    Shareable Results
+                  </CardTitle>
+                  <CardDescription className="text-indigo-200">
+                    Get a beautiful, shareable image of your results perfect for LinkedIn, Twitter, or your portfolio. Show off your developer DNA!
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="group bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border-white/20 rounded-2xl shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 hover:scale-105">
+                <CardHeader className="pb-4">
+                  <div className="mb-4 p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl w-fit">
+                    <TrendingUp className="h-8 w-8 text-white" />
+                  </div>
+                  <CardTitle className="text-2xl text-white group-hover:text-purple-200 transition-colors">
+                    Real-time Insights
+                  </CardTitle>
+                  <CardDescription className="text-indigo-200">
+                    Get instant analysis of your GitHub activity with beautiful visualizations and actionable insights about your coding patterns.
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="group bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border-white/20 rounded-2xl shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 hover:scale-105">
+                <CardHeader className="pb-4">
+                  <div className="mb-4 p-3 bg-gradient-to-br from-green-500 to-teal-600 rounded-xl w-fit">
+                    <Zap className="h-8 w-8 text-white" />
+                  </div>
+                  <CardTitle className="text-2xl text-white group-hover:text-purple-200 transition-colors">
+                    Lightning Fast
+                  </CardTitle>
+                  <CardDescription className="text-indigo-200">
+                    Our advanced algorithms process your entire GitHub history in seconds, delivering comprehensive results without the wait.
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="group bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border-white/20 rounded-2xl shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 hover:scale-105">
+                <CardHeader className="pb-4">
+                  <div className="mb-4 p-3 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl w-fit">
+                    <Bot className="h-8 w-8 text-white" />
+                  </div>
+                  <CardTitle className="text-2xl text-white group-hover:text-purple-200 transition-colors">
+                    AI-Powered Humor
+                  </CardTitle>
+                  <CardDescription className="text-indigo-200">
+                    Our AI doesn't just analyze - it entertains! Get witty, personalized commentary about your coding style that's both insightful and hilarious.
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section className="py-24 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-20">
+              <h3 className="text-5xl sm:text-6xl font-black mb-6 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
+                What Developers Are Saying
+              </h3>
+              <p className="text-xl text-indigo-200">
+                Join thousands of developers who've discovered their coding personality
+              </p>
+            </div>
+
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border-white/20 rounded-2xl shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 hover:scale-105">
+                <CardContent className="pt-8">
+                  <div className="flex items-center mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                    ))}
+                  </div>
+                  <p className="text-lg text-white/90 mb-6 italic">
+                    "CodePersona nailed my coding personality! The insights are surprisingly accurate and hilarious. A must-try for every developer."
+                  </p>
+                  <div className="flex items-center">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                      JD
+                    </div>
+                    <div className="ml-4">
+                      <p className="font-semibold text-white">Jane Doe</p>
+                      <p className="text-indigo-300 text-sm">Senior Developer</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border-white/20 rounded-2xl shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 hover:scale-105">
+                <CardContent className="pt-8">
+                  <div className="flex items-center mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                    ))}
+                  </div>
+                  <p className="text-lg text-white/90 mb-6 italic">
+                    "Finally, a tool that understands my late-night coding habits. The visualizations are stunning and easy to share!"
+                  </p>
+                  <div className="flex items-center">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                      JS
+                    </div>
+                    <div className="ml-4">
+                      <p className="font-semibold text-white">John Smith</p>
+                      <p className="text-indigo-300 text-sm">Fullstack Engineer</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border-white/20 rounded-2xl shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 hover:scale-105">
+                <CardContent className="pt-8">
+                  <div className="flex items-center mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                    ))}
+                  </div>
+                  <p className="text-lg text-white/90 mb-6 italic">
+                    "I'm officially a 'Framework Hopper' according to CodePersona, and honestly, they're not wrong. Super fun and insightful!"
+                  </p>
+                  <div className="flex items-center">
+                    <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-teal-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                      AL
+                    </div>
+                    <div className="ml-4">
+                      <p className="font-semibold text-white">Alex Lee</p>
+                      <p className="text-indigo-300 text-sm">Tech Lead</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-24 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="bg-gradient-to-r from-indigo-500/20 to-purple-500/20 backdrop-blur-xl rounded-3xl border border-white/20 p-12 shadow-2xl">
+              <h3 className="text-4xl sm:text-5xl font-black mb-6 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
+                Ready to Discover Your Developer DNA?
+              </h3>
+              <p className="text-xl text-indigo-200 mb-8 max-w-2xl mx-auto">
+                Join thousands of developers who've already discovered their coding personality. It's free, fast, and surprisingly accurate!
+              </p>
+              <Button 
+                size="lg"
+                onClick={() => document.querySelector('input')?.focus()}
+                className="h-16 px-12 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold text-lg rounded-xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-105"
+              >
+                <Sparkles className="mr-3 h-6 w-6" />
+                Get Started Now
+                <ArrowRight className="ml-3 h-6 w-6" />
+              </Button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+}

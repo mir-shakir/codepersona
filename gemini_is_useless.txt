@@ -1,0 +1,25 @@
+Hello, I need your help to fix the user interface for my project, "CodePersona". The previous AI failed to create a visually appealing design, and the current UI looks very plain and generic.
+
+**Project Goal:**
+The main goal, as described in the attached `gemini_project_prompt.md`, is to build a web application with a "stunning, award-winning UI/UX that looks like a $1M+ product." The brand identity calls for a modern purple/blue gradient (#6366f1 to #8b5cf6) as the primary color scheme. The application should feel professional, polished, and delightful to use.
+
+**Current Problem:**
+The current UI is technically functional, but it completely lacks visual appeal. It looks like a plain, unstyled document with a white background and black text. It does not use the brand's color scheme and fails to meet the high-quality design requirements.
+
+**Task:**
+Please analyze the attached files and provide me with the exact code changes needed to transform the current UI into a visually stunning and modern application. I need full, complete code for any files you want to change, so I can replace them directly. The new design should heavily feature the primary gradient and look professional and polished.
+
+**Key Files for Context:**
+To help you, I have attached the following files. Here is why each one is important:
+
+1.  **`gemini_project_prompt.md`**: This is the most important file. It contains the original vision, brand identity, color scheme, and detailed UI/UX requirements. Please refer to this for the target design aesthetic.
+2.  **`codepersona/tailwind.config.ts`**: This is the Tailwind CSS configuration file. You may need to modify this to extend the theme or add plugins.
+3.  **`codepersona/src/app/globals.css`**: This is the main global stylesheet. It defines the base CSS variables for colors and themes. This file is critical for setting the overall look and feel.
+4.  **`codepersona/src/app/layout.tsx`**: This is the root layout for the Next.js application. All pages are rendered through this component.
+5.  **`codepersona/src/app/page.tsx`**: This is the code for the main landing page. This is the most important page to redesign.
+6.  **`codepersona/src/app/results/[analysisId]/page.tsx`**: This is the results page, which also needs a complete visual overhaul.
+7.  **`codepersona/src/components/shared/Header.tsx`**: The shared header component used on all pages.
+8.  **`codepersona/src/components/ui/button.tsx`**: An example of a base UI component that might need styling adjustments to fit the new design.
+9.  **`codepersona/src/components/ui/card.tsx`**: Another fundamental UI component that is used throughout the app.
+
+Thank you for your help in fixing this.
